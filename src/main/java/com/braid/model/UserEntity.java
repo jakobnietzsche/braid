@@ -13,6 +13,7 @@ public class UserEntity {
     private Long id;
     private String username;
     private String password;
+    private String email;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -24,6 +25,14 @@ public class UserEntity {
         return String.format(
                 "User[id=%d, username='%s']",
                  id, username);
+    }
+
+    public List<RoleEntity> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<RoleEntity> roles) {
+        this.roles = roles;
     }
 
     public Long getId() {
@@ -49,4 +58,8 @@ public class UserEntity {
     public void setPassword(String email) {
         this.password = password;
     }
+
+    public String getEmail() { return email; }
+
+    public void setEmail(String email) { this.email = email; }
 }

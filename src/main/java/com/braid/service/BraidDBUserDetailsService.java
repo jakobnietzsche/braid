@@ -13,15 +13,18 @@ import java.util.ArrayList;
 @Service
 public class BraidDBUserDetailsService implements UserDetailsService {
 
+    private final UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public BraidDBUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByUsername(username);
-        if (userEntity == null) {
-            throw new UsernameNotFoundException(username);
-        }
+        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException(String.format("Cannot find user with username: %s", username))
+        );
         return new org.springframework.security.core.userdetails.User(userEntity.getUsername(), userEntity.getPassword(), new ArrayList<>());
     }
 }

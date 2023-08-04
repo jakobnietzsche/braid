@@ -3,6 +3,8 @@ package com.braid.repository;
 import com.braid.model.RoleEntity;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Optional;
+
 public interface RoleRepository extends CrudRepository<RoleEntity, Long> {
-    RoleEntity findByName(String name);
+    Optional<RoleEntity> findByName(String name);
 }
