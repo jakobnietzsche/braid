@@ -6,13 +6,23 @@ public class LoginDto {
 
     private boolean stayLoggedIn;
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
     public String getUsername() {
         return username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getPassword() {
         return password;
     }
 
+    public void setStayLoggedIn(boolean stayLoggedIn) {
+        this.stayLoggedIn = stayLoggedIn;
+    }
     public boolean getStayLoggedIn() { return stayLoggedIn; }
 }

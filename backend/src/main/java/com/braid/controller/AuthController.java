@@ -6,14 +6,15 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,23 +32,30 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginRequest, HttpServletResponse response) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
-                )
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtService.generateToken(authentication, loginRequest.getStayLoggedIn());
-        long expirationTime = loginRequest.getStayLoggedIn() ? LONG_EXPIRATION_TIME : SHORT_EXPIRATION_TIME;
-        Cookie jwtCookie = new Cookie("JWT", jwt);
-        jwtCookie.setMaxAge((int) expirationTime);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setPath("/");
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtService.generateToken(authentication, loginRequest.getStayLoggedIn());
+            long expirationTime = loginRequest.getStayLoggedIn() ? LONG_EXPIRATION_TIME : SHORT_EXPIRATION_TIME;
 
-        response.addCookie(jwtCookie);
-        response.addHeader("Set-Cookie", jwtCookie+ "; SameSite=None; Secure");
-        return ResponseEntity.ok().build();
+            /*
+            Cookie jwtCookie = new Cookie("JWT", jwt);
+            jwtCookie.setMaxAge((int) expirationTime);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setPath("/");
+
+            response.addCookie(jwtCookie);
+            */
+            response.setHeader("Set-Cookie", "JWT=" + jwt + "; Max-Age=" + expirationTime + "; HttpOnly; SameSite=None; Secure");
+            return ResponseEntity.ok("Login successful");
+        } catch (AuthenticationException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization failed");
+        }
     }
 
     @GetMapping("/check-auth")

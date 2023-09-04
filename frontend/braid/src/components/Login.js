@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+
+const LogoutButton = ({ onLogout }) => (
+    <button onClick={onLogout}>Logout</button>
+);
+
 const LoginForm = ({ onLogin }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -18,7 +23,9 @@ const LoginForm = ({ onLogin }) => {
             }, {
                 withCredentials: true
             });
-            console.log(response);
+            if (response.status === 200) {
+                onLogin();
+            }
         } catch (error) {
             setError('Login failed. Please check your credentials and try again.');
         }
@@ -57,12 +64,31 @@ const LoginForm = ({ onLogin }) => {
     );
 }
 
-function AuthenticatedView() {
-    return <div>Welcome back! You are now logged in.</div>
+function AuthenticatedView({ onLogout }) {
+    return (
+        <div>
+            Welcome back! You are now logged in.
+            <LogoutButton onLogout={onLogout} />
+        </div>
+    );
 }
 
 function LoginPage() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const handleLogout = async () => {
+        try {
+            const response = await axios.post('https://localhost:8080/accounts/logout', {}, {
+                withCredentials: true
+            });
+
+            if (response.status === 200) {
+                setIsLoggedIn(false);
+            }
+        } catch (error) {
+            console.error('Failed to logout', error);
+        }
+    };
 
     const checkAuthentication = async () => {
         try {
@@ -80,11 +106,11 @@ function LoginPage() {
     };
 
     useEffect(() => {
-        checkAuthentication().then(r => {});
+        checkAuthentication().then();
     }, []);
     return (
         <div>
-            {isLoggedIn ? <AuthenticatedView /> : <LoginForm onLogin={() => setIsLoggedIn(true)} />}
+            {isLoggedIn ? <AuthenticatedView onLogout={handleLogout} /> : <LoginForm onLogin={() => setIsLoggedIn(true)} />}
         </div>
     );
 }
