@@ -43,19 +43,18 @@ public class AuthController {
             String jwt = jwtService.generateToken(authentication, loginRequest.getStayLoggedIn());
             long expirationTime = loginRequest.getStayLoggedIn() ? LONG_EXPIRATION_TIME : SHORT_EXPIRATION_TIME;
 
-            /*
-            Cookie jwtCookie = new Cookie("JWT", jwt);
-            jwtCookie.setMaxAge((int) expirationTime);
-            jwtCookie.setHttpOnly(true);
-            jwtCookie.setPath("/");
 
-            response.addCookie(jwtCookie);
-            */
             response.setHeader("Set-Cookie", "JWT=" + jwt + "; Max-Age=" + expirationTime + "; HttpOnly; SameSite=None; Secure");
             return ResponseEntity.ok("Login successful");
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization failed");
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        response.setHeader("Set-Cookie", "JWT=; Max-Age=0; HttpOnly; SameSite=None; Secure");
+        return ResponseEntity.ok("Logged out successfully");
     }
 
     @GetMapping("/check-auth")

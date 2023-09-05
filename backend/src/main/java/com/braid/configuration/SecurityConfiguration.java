@@ -47,7 +47,7 @@ public class SecurityConfiguration {
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable
                 ).authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/users/register", "/accounts/login", "/accounts/check-auth").permitAll()
+                        .requestMatchers("/users/register", "/accounts/login", "/accounts/check-auth", "/accounts/logout").permitAll()
                         .requestMatchers("/users/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

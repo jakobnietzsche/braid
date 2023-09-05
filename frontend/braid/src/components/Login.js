@@ -55,7 +55,7 @@ const LoginForm = ({ onLogin }) => {
                         type="checkbox"
                         id="stayLoggedIn"
                     />
-                    <label htmlFor="stayLoggedIn">Stay Logged In</label>
+                    <label htmlFor="stayLoggedIn">Remember me</label>
                 </div>
                 {error && <div style={{color: 'red'}}>{error}</div>}
                 <button type="submit">Login</button>
@@ -73,8 +73,7 @@ function AuthenticatedView({ onLogout }) {
     );
 }
 
-function LoginPage() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+function LoginPage({isLoggedIn, setIsLoggedIn }) {
 
     const handleLogout = async () => {
         try {
@@ -110,7 +109,9 @@ function LoginPage() {
     }, []);
     return (
         <div>
-            {isLoggedIn ? <AuthenticatedView onLogout={handleLogout} /> : <LoginForm onLogin={() => setIsLoggedIn(true)} />}
+            {isLoggedIn
+                ? <AuthenticatedView onLogout={handleLogout} />
+                : <LoginForm onLogin={() => setIsLoggedIn(true)} />}
         </div>
     );
 }
