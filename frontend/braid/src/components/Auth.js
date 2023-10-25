@@ -1,6 +1,8 @@
+import Button from '@mui/material/Button';
 import React, { useState } from 'react';
 import Register from './Register';
 import Login from './Login';
+import '../styles/styles.css';
 
 const Auth = () => {
     const [isRegistering, setIsRegistering] = useState(false);
@@ -12,9 +14,11 @@ const Auth = () => {
               ? <Register />
               : <Login isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
           {!isLoggedIn && (
-              <button onClick={() => setIsRegistering(!isRegistering)}>
+              <Button onClick={() => setIsRegistering(!isRegistering)}
+                      variant="contained"
+                      className="authButton">
                 {isRegistering ? 'Go to Login' : 'Go to Register'}
-              </button>
+              </Button>
               )}
       </div>
     );

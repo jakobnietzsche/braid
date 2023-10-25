@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 import axios from 'axios';
-
+import '../styles/styles.css';
 
 const LogoutButton = ({ onLogout }) => (
     <button onClick={onLogout}>Logout</button>
 );
 
 const LoginForm = ({ onLogin }) => {
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
+
+    const togglePasswordVisibility = () => {
+        setIsPasswordVisible(!isPasswordVisible);
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -35,20 +42,32 @@ const LoginForm = ({ onLogin }) => {
             <h2>Login</h2>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Username: </label>
-                    <input
+                    <TextField
                         type="text"
                         value={username}
                         onChange={e => setUsername(e.target.value)}
+                        label="Username"
+                        variant="outlined"
+                        className="authTextField"
                     />
                 </div>
                 <div>
-                    <label>Password: </label>
-                    <input
-                        type="password"
+                    <TextField
+                        type={isPasswordVisible ? 'text' : 'password'}
                         value={password}
                         onChange={e => setPassword(e.target.value)}
+                        label="Password"
+                        variant="outlined"
+                        className="authTextField"
                     />
+                    <Button
+                        type="button"
+                        variant="contained"
+                        className="authButton"
+                        onClick={togglePasswordVisibility}
+                    >
+                        {isPasswordVisible ? 'Hide' : 'Show'}
+                    </Button>
                 </div>
                 <div>
                     <input
@@ -58,7 +77,12 @@ const LoginForm = ({ onLogin }) => {
                     <label htmlFor="stayLoggedIn">Remember me</label>
                 </div>
                 {error && <div style={{color: 'red'}}>{error}</div>}
-                <button type="submit">Login</button>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    className="authButton"
+                > Login
+                </Button>
             </form>
         </div>
     );
